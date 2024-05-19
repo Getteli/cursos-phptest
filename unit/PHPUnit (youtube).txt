@@ -1,0 +1,174 @@
+PHPUnit (youtube)
+Teoria
+
+1 - O que são testes automatizados
+	- O que é um teste ? é voce criar um cenário, executar a ação que deseja e verificar se o resultado é o esperado
+	- para criar esse teste, precisamos criar um arquivo separado do que estamos fazendo (Se temos uma classe, um metodo ou o que for, criamos um outro arquivo para testar esse)
+	- nesse novo arquivo precisamos ter os passo de o que é um teste:
+		- criar um cenario: chamar, definir a classe ou o metodo
+		- executar a ação: fazer o seu conteudo rodar aquele metodo/classe/objecto
+		- e verificar:
+			- verificar tem 2 formas, manual: nós mesmo olhamos e confirmamos ou não
+			- ou automatica: a gente cria no codigo desse arquivo para dizer se o que era esperado foi relizado (seja verificar o conteudo, verificar o resultado, saber se existe ou nao, o que for)
+	- conhecido como Triple A, ou Triplo A
+	- Arrange (cenario), Act (ação), Assert (verificação)
+	- a ideia de testes, pode ser feita em qualquer linguagem
+	- podemos fazer de forma manual, criar um de forma que rode automatico, ou usar ferramentas
+	- existem diversas ferramentas que auxiliam de forma automatica os testes (no php temos por exemplo o phpUnit)
+
+2 - O que são testes de unidades
+	- teste de unidade, é testar a menor unidade possivel
+	- o que é unidade ? unidade é o menor item que podemos testar, no caso de um OO, pode ser um método por exemplo, pode ser um atributo, uma função solta, ou até uma classe (mas isso pode significar que nao esta bem modelado), 
+	- em geral é um metodo
+	- Diferença entre teste de unidade ou teste unitário
+		- muda apenas o nome, é a mesma coisa
+
+3 - O que é TDD
+	- TDD é Test-Driven Development
+	- ou Desenvolvimento guiado a testes
+	- A ideia do TDD, é vc primeiro criar o teste
+	- saber o que vai testar, como vai ser feito, qual o cenario, a ação
+	- Depois que o teste esta feito, ai desenvolvemos a classe real, criar o cenario que foi proposto no arquivo de teste
+	- depois faz ele passar no teste
+	- e depois um refatoramento, melhoramento uma polida no código
+
+4 - Pirâmide de testes
+	- a ideia é entender como podemos fazer o sistema rodar os testes sempre que fazemos um deploy
+	- Tipos de testes automatizados
+	- Na piramide
+	- a cima de tudo, teste manual, coisa pratica
+	- o topo - INTERFACE e2e ponta a ponta 
+	- meio  - INTEGRACAO
+	- base - UNITARIO
+	- quanto mais a baixo, mais rapido
+	- quanto mais a cima, mais complexo, demorado e possivel quebra
+
+	- Para o teste de unidade, é interessante entendermos que em um cenario real, o sistema é interligado, uma classe depende de outras
+	- para realizar o teste unitario da forma correta, o ideal é criar dubles, dubles de cenario
+	- onde a classe/metodo que vamos testar (unidade), reconhece esses dubles como sendo as classes reais
+	- criamos instancias das classes dependentes por exemplo, e a classe/metodo que vamos testar, reconhece esses dubles para conseguir realizar o teste
+
+	- teste de integração
+	- seria o teste de 2 ou mais unidades juntas que se comunicam
+	- assim testamos se elas estao realizando a ação esperada entre elas, corretamente
+	- POREM, teste de integração é comumente dito quando realizamos o teste de consistencia de dados em um db, ou um disparador de email,push, requisição de sistemas externos, uso de API's, 
+	- ou seja, teste de integração é tambem o uso do sistema com outro externo
+
+	- teste de ponta a ponta e2e, teste interface
+	- abrir uma tela, clicar nas coisas, ações que o front vai executar
+	- mas isso em um ambiente controlado
+
+5 - O que são dubles de testes
+	- a ideia de usar duble, é nao precisar de uma classe que precise ser usada na unidade que queremos testar
+	- porem a unidade ainda precisa do objeto para receber e entao executar a ação
+	- para isso, no php por exemplo, temos como criar uma classe anonima q vai SEMPRE extender a classe que a unidade receberia.
+	- Para isso fazemos assim, exemplo:
+		- a classe é pessoa
+		- para fazer o seu duble, fazemos: new class extends pessoa
+		- isso cria uma classe anonina que extende pessoa, assim tudo que pessoa tem e faz, essa classe duble fará
+		- assim poderemos colocar direto nesse duble algum dado fixo, para testarmos a ação que queremos, sem depender de dados reais
+	- Dubles existem de diversos tipos, dump, stub e outros
+	- nesse caso esse pode se enquadrar no STUB
+
+6 - PHPUnit: como criar testes
+	- primeiro, instalamos via composer, phpunit/phpunit
+	- para começar, criamos uma classe de teste, essa classe por convenção, tem o mesmo nome da unidade que queremos testar + test no final, ou seja:
+	- queremos testar um metodo de exportarPessoas
+	- o nome da classe será exportarPessoasTest
+	- essa classe de teste ela extenderá uma classe do phpunit, chamada testCase
+	- o php unit quando rodar para testar, ele vai procurar 2 coisas nos metodos dessa classe
+	- ou ela começar com "test" ou ter uma anotação/anotation test descrita acima
+	- exemplo de um metodo:
+		public function testBuscarPessoas()
+	- para começar a testar usando o phpunit, podemos fazer via terminal
+	- no terminal por, por exemplo:
+		- php phpunit nomearquivo.php
+		- problemas:
+			- o phpunit nao pode ser só chamado assim, tem q ser pelo caminho dele, dentro do vendor/bin/phpunit
+			- o nome do arquivo por convenção tem que ter o mesmo nome da classe, para o unit isso é necessario, se nao da erro
+	- a parte da verificaçao/assert, precisa ser feita pelo phpunit, se for manual ele entende como um teste de risco e nao marca que foi feito a verificacao, como prova de que o teste passou, para isso
+	- usamos os metodos que foram extendidos da classe testCase
+	- $this->AssertTrue(a mesma verificacao feita em um if)
+	- exemplo: $this->AssertTrue($resultadoexport == $dadoesperadoxml)
+	- assim no terminal o unit consegue dizer e exibir que o teste foi feito corretamente
+	- Porem, ele caso ocorra um erro, esse metodo nao será descritivo, ele vai apenas dizer que o resultado nao é verdadeiro
+	- para isso temos outros 2 metodos: AssertEquals ou AssertSame, que vai verificar se o parametro SÃO IGUAIS
+	- a forma dos parametros é diferente, passa no 1° um e no 2° outro
+	- $this->AssertSame($resultadoexport, $dadosesperadoxml)
+	- esses metodos exibe os 2 resultados mostrando que sao diferentes e etc..
+	- O phpUnit tbm tem uma forma mais simples de criar dubles
+	- podemos chamar um metodo chamado $this->createStub(passa a classe que vai ser extendida)
+	- assim temos ja a classe do duble, agora falta os metodos pra gente saber o que esperar e ter tudo controlado, criamos assim:
+	- $pessoa = $this->createStub(Pessoa::class)
+	- (o metodo createStub possui metodos nessa classe de duble)
+	- $pessoa->method("nome metodo")->willReturn("valor que quero na saida")
+	- assim eu vou poder chamar o objeto pessoa e chamar o nome do metodo como se ele existisse
+	- Para deixar mais automatizado, nao precisamos passar sempre o nome do arquivo, caso a gente queira testar mais de 1, fazemos o mesmo comando só q em vez do arquivo q vai testar, passamos o nome da pasta e ele realizará todos os testes existentes nas classes e arquivos;
+
+7 - PEST - uma nova ferramente de criar testes
+	- pest utiliza unit por tras
+	- ele nao precisa criar a classe, apenas criar um metodo em um arquivo php, limpo
+	- sem usar namespace ou chamar a classe do pest nem nada, ja que vai ser chamado via terminal
+	- o metodo que criamos é um chamado test ou it seus parametros ('descricao, nome informando o que o test vai testar', function(){}) e a funcao com a msm ideia do phpunit
+	- um arranje, act, assert..
+	- o metodo de assert do phpunit funciona aqui
+	- porem pest tem um proprio tbm, chamado expect()
+	- expect funciona assim:
+	- expect($variavelDoResultado)->tobe('o que eu espero')
+	- o tobe, pode ter varios outros, para verificar array, se contem ou nao e por ai vai, só ver na doc
+	- o seu retorno é como no phpunit, descritivo e etc
+
+8 - InfectionPHP teste de mutação
+	- o InfectionPHP é uma ferramente para auxiliar na mutanção de testes, realizar uma cobertura de código
+	- para cobrir se os testes estao corretos e pegando bugs corretamente
+	- teste de mutação é vc adicionar um bug proposital no código e testar se ele vai pegar
+	- o InfectionPHP nao funciona com pest por enquanto
+	- vc pode configurar ele e por em um log o resultado
+	- o InfectionPHP pega e poem mutações, muda o código um pouco e verifica se ele pega o bug
+	- e no log ele poem o resultado explicado
+
+9 - Cobertura de código
+	- o phpunit pode ser usado para uma cobertura de código, sem a ferramenta do InfectionPHP 
+	- ele usa o drive do xdebug
+	- via terminal, ele exibe o que o código executou, quantas linhas, metodos e etc
+	- podemos configurar para exibir em um html gerado, configuracao feita no phpunit.xml
+	- e ele mostra no html qual o metodo exatamente nao foi executado ou a linha
+	- essa analise é feita mas é necessario um humano para saber se vale a pena executar ou melhorar, pois se for algo simples q ele nao executou, nao vai agregar valor e nao tem regra de negocio
+	- se nao vai apenas verificar código e nao regra de negocio
+
+10 - teste E2E (ponta a ponta)
+	- o teste é mais manual, é a ponta da piramide
+	- A ideia é automatizar esse tipo de teste
+	- podemos utilizar junto com o phpUnit, o php webdriver junto com selenium
+	- selenium é um framework que consegue criar e gerenciar instancias de servidores, maquinas e navegadores
+	- podemos utilizar ele como um webscrapper, realiazando o acesso a um site e testar o uso do usuario
+	- criamos uma classe como de teste padrao, depois iniciamos o webdriver,iniciamos o selenium numa porta especifica, depois o webdriver criado botamos a url q queremos (pode ser uma real msm)
+	- e depois fazemos o assert, verificar o que queremos, ele abre real um navegador e vemos a ação sendo feita
+
+11 - Conhecendo melhor o PEST
+	- convertendo os metodos e classes anteriores para o pest
+	- alem disso, podemos ter um metodo padrao que sera executado antes de todos os testes
+	- no mesmo arquivo, em primeiro lugar, criar um metodo chamado beforeEach(function(){}), nessa funcao podemos iniciar metodos q serao repetidos em todos os testes, setar alguma variavel e por ai vai
+	- podemos por o que iniciamos como uma propriedade e puxar essa propriedade pelo $this dentro dos testes
+
+12 - Testes de software
+	- Entendendo melhor tecnicas e dicas
+	- saber quais dados podemos usar em testes de unidade
+	- classes de equivalencia (sao quando metodos de testes sao muito parecidos, mudando apenas algum dado, entao podemos unir isso)
+	- se esta mexendo com numeros, fazer analise de fronteira (ou seja, fazer testes com valores proximo ao da regra de negocio (Se algo precisa ser 5, fazemos testes com 4,5 e 6))
+	- no pest apra facilitar esses 2 conceitos, podemos fazer da seguimente maneira
+	- dentro do teste/it, depois da descricao temos o function(){}, no function podemos passar parametros ou seja:
+	- it('teste descricao', function($parametro1, $parametro2 = null, bool $parametro3){})
+	- e assim o teste dentro é feito com os valores do parametro
+	- quem executara esses parametros ?
+	- sera feito com um metodo depois do it/test, assim:
+	- it('teste descricao', function($parametro1, $parametro2 = null, bool $parametro3){})->with([
+	[$parametro1, $parametro2, $parametro3],
+	[$parametro1, $parametro2, $parametro3],
+	[$parametro1, $parametro2, $parametro3],
+	])
+	- um metood with, q recebe um array de arrays, e dentro do array mais interno, vem os parametros separados por virgula que sera executado em uma unica classe de teste, simples e facil
+
+13 - mostrando um código de teste de unidade em um codigo real em producao
+
+14 - nova versão do PEST
